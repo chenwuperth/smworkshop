@@ -33,11 +33,13 @@ def parse_infer_args():
     parser.add_argument('--infer-mode', type=str, default='bt', help="BatchTransform (bt) or EndPoint (ep)")
     parser.add_argument('--input-file', type=str)
     parser.add_argument('--model-file', type=str)
-    parser.add_argument('--model-name', type=str)
     parser.add_argument('--output-dir', type=str)
-    parser.add_argument('--api-url', type=str)
 
     args, _ = parser.parse_known_args()
     if args.infer_mode == 'bt' and args.input_file is None:
         raise Exception('Batch transform inference needs input-file')
+    for arg, text in zip([args.model_file, args.output_dir], ['--model-file', '--output-dir']):
+        if arg is None:
+            raise Exception(f'{text} is None')
+    
     return args

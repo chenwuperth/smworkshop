@@ -8,6 +8,7 @@ https://github.com/awslabs/amazon-sagemaker-examples/blob/master/sagemaker-pytho
 
 from sagemaker.sklearn.model import SKLearnModel
 
+import os
 import logging
 import sagemaker
 import boto3
@@ -23,10 +24,10 @@ def run_as_local_main():
     sm_boto3 = boto3.client('sagemaker')
     sess = sagemaker.Session()
     region = sess.boto_session.region_name
-    #model_url = 's3://sagemaker-ap-southeast-2-454979696062/rf-scikit-2020-05-22-08-53-00-634/output/model.tar.gz'
     model_url = args.model_file
     model = SKLearnModel(
         model_data=model_url,
+        source_dir=os.path.abspath(os.path.dirname(__file__)),
         role=get_sm_execution_role(ON_SAGEMAKER_NOTEBOOK, region),
         entry_point='inference.py')
     
@@ -45,7 +46,7 @@ def run_as_local_main():
         transformer.transform(args.input_file, content_type="text/csv")
         transformer.wait()
     elif 'ep' == infer_mode:
-        model.deploy()
+        model.deploy(instance_type='ml.c5.xlarge', initial_instance_count=1)
     else:
         raise Exception(f'Unknown inference mode {infer_mode}')
 
