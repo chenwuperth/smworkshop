@@ -5,7 +5,7 @@ adapted from
 https://github.com/awslabs/amazon-sagemaker-examples/blob/master/sagemaker-python-sdk/scikit_learn_randomforest
 
 """
-
+import os
 import datetime
 import tarfile
 
@@ -76,10 +76,10 @@ sklearn_estimator = SKLearn(
                        'target': 'target'})
 
 # launch training job, with asynchronous call
-sklearn_estimator.fit({'train':trainpath, 'test': testpath})
+sklearn_estimator.fit({'train':trainpath, 'test': testpath}, wait=False)
 
-artifact = sm_boto3.describe_training_job(
-    TrainingJobName=sklearn_estimator.latest_training_job.name)['ModelArtifacts']['S3ModelArtifacts']
+# artifact = sm_boto3.describe_training_job(
+#     TrainingJobName=sklearn_estimator.latest_training_job.name)['ModelArtifacts']['S3ModelArtifacts']
 
-# we will use this URL of the artifact for inference
-print(f'Model artifact persisted at {artifact}')
+# # we will use this URL of the artifact for inference
+# print(f'Model artifact persisted at {artifact}')
