@@ -61,6 +61,7 @@ testpath = sess.upload_data(
 
 sklearn_estimator = SKLearn(
     entry_point='train.py',
+    source_dir=os.path.abspath(os.path.dirname(__file__)),
     role = sm_role,
     train_instance_count=1,
     train_instance_type='ml.c5.xlarge',
