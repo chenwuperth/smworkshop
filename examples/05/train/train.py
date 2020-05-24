@@ -6,6 +6,7 @@ Adapted from https://docs.fast.ai/tabular.html
 """
 
 import argparse
+from pathlib import Path
 
 import torch
 from fastai.tabular import *
@@ -30,6 +31,7 @@ args, _ = parser.parse_known_args()
 
 # we simply ignore the dataset URL from S3 for now
 #path = untar_data(URLs.ADULT_SAMPLE)
+path = Path(args.train)
 
 #df = pd.read_csv(path/'adult.csv')
 df = pd.read_csv(os.path.join(args.train, args.train_file))

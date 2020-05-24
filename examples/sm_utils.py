@@ -8,6 +8,7 @@ def get_sm_execution_role(on_sm_notebook, region):
         return get_execution_role()
     # hack - just hardcode our role
     # return "arn:aws:iam::1234567:role/service-role/AmazonSageMaker-ExecutionRole-20171229T134248"
+    # return 'AmazonSageMaker-ExecutionRole-20171229T134248'
 
     # cf - https://github.com/aws/sagemaker-python-sdk/issues/300
     client = boto3.client('iam', region_name=region)
@@ -42,4 +43,11 @@ def parse_infer_args():
         if arg is None:
             raise Exception(f'{text} is None')
     
+    return args
+
+def parse_train_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--tune', dest='tune', action='store_true', default=False)
+    parser.add_argument('--tune-job-name', type=str)
+    args, _ = parser.parse_known_args()
     return args
