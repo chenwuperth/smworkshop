@@ -14,7 +14,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_boston
 from sagemaker.amazon.amazon_estimator import get_image_uri
 
-rom ...sm_utils import get_sm_execution_role
+from ...sm_utils import get_sm_execution_role
 
 
 def reformat_csv(csv_fn):
@@ -38,7 +38,7 @@ def reformat_csv(csv_fn):
         fds[0] = fds[-1]
         fds = fds[0:-1]
         new_line = ','.join(fds)
-    new_lines.append(new_line)
+        new_lines.append(new_line)
     with open(new_fn, 'w') as fout:
         fout.write(os.linesep.join(new_lines))
     return new_fn
@@ -114,4 +114,4 @@ xgb = sagemaker.estimator.Estimator(
         "objective":"reg:linear",
         "num_round":"50"
     })
-xgb.fit({'train':s3_input_train, 'test': s3_input_validation}, wait=False)
+xgb.fit({'train':s3_input_train, 'validation': s3_input_validation}, wait=False)
