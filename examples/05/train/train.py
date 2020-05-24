@@ -7,6 +7,7 @@ Adapted from https://docs.fast.ai/tabular.html
 
 import argparse
 from pathlib import Path
+from copy import deepcopy
 
 import torch
 from fastai.tabular import *
@@ -59,15 +60,29 @@ for it in range(800, 1000):
     _, _, a = learn.predict(item)
     preds.append([a[0], a[1]])
 preds = np.stack(preds)
+print('preds info ...')
+print(preds.shape)
+print(preds[0:5])
 preds = torch.from_numpy(preds)
 df1 = df.iloc[800:1000].copy()
 df1['salary'] = df1['salary'].astype('category')
 cat_columns = df1.select_dtypes(['category']).columns
 df1[cat_columns] = df1[cat_columns].apply(lambda x: x.cat.codes)
-yt = df1['salary'].values[800:1000].astype(np.int32)
+yt = df1['salary'].values.astype(np.int64)
+print('yt info ...')
+print(yt[0:5])
 yt = torch.from_numpy(yt)
 dice_acc = dice(preds, yt).numpy()
 print(f'Dice accuracy: {dice_acc}')
 
 # persist model
-learn.export(f'{args.model_dir}/model.pkl')
+#learn.path = args.model_dir
+#learn.export(Path('model.pkl'))
+model = learn.model
+model.cpu
+
+with open(os.path.join(args.model_dir, 'model.pth'), 'wb') as f:
+    torch.save(model.state_dict(), f)
+    
+print('model persisted at ' + os.path.join(args.model_dir, 'model.pth'))
+
