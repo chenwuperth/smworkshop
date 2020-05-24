@@ -1,18 +1,13 @@
 """
 Train job interacts with SageMaker
 
-adapted from 
-https://github.com/awslabs/amazon-sagemaker-examples/blob/master/sagemaker-python-sdk/scikit_learn_randomforest
-
 """
 import os
 import datetime
-import tarfile
 
 import boto3
 import pandas as pd
 import numpy as np
-from sagemaker import get_execution_role
 import sagemaker
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_boston
@@ -67,7 +62,7 @@ pytorch_estimator = PyTorch(
     train_instance_count=1,
     train_instance_type='ml.c5.xlarge',
     framework_version='1.0.0',
-    base_job_name='rf-pytorch',
+    base_job_name='dense-pytorch',
     metric_definitions=[
         {'Name': 'median-AE',
          'Regex': "AE-at-50th-percentile: ([0-9.]+).*$"}],
