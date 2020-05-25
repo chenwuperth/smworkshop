@@ -48,6 +48,22 @@ if __name__ =='__main__':
         min_samples_leaf=args.min_samples_leaf,
         n_jobs=-1)
     
+    #TODO switch to MLPRegressor to have another go
+    # from sklearn.neural_network import MLPRegressor
+    """
+    model = MLPRegressor(
+        hidden_layer_sizes=(50, 50, 50),
+        alpha=0,
+        activation='relu',
+        batch_size=128,
+        learning_rate_init = 1e-3,
+        solver='adam',
+        learning_rate = 'constant',
+        verbose = False,
+        n_iter_no_change = 1000,
+        validation_fraction = 0.0,
+        max_iter=1000)
+    """
     model.fit(X_train, y_train)
 
     # print abs error
