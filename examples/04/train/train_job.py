@@ -68,7 +68,8 @@ pytorch_estimator = PyTorch(
          'Regex': "AE-at-50th-percentile: ([0-9.]+).*$"}],
     hyperparameters = {'n-epochs': 1500,
                        'features': 'CRIM ZN INDUS CHAS NOX RM AGE DIS RAD TAX PTRATIO B LSTAT',
-                       'target': 'target'})
+                       'target': 'target'},
+    tags=[{"Key": "CostCentre", "Value": "SageMaker"}])
 
 # launch training job, with asynchronous call
 pytorch_estimator.fit({'train':trainpath, 'test': testpath}, wait=False)
