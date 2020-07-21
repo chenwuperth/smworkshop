@@ -31,14 +31,16 @@ if __name__ == "__main__":
         model_data=preproc_model_url,
         source_dir=os.path.abspath(os.path.dirname(__file__)),
         role=sm_role,
-        entry_point='infer_preproc.py')
+        entry_point='infer_preproc.py',
+        sagemaker_session=sess)
 
     ll_image = get_image_uri(region, 'linear-learner')
 
     ll_model = Model(
         model_data=model_url,
         image=ll_image,
-        role=sm_role
+        role=sm_role,
+        sagemaker_session=sess
     )
 
     timestamp_prefix = strftime("%Y-%m-%d-%H-%M-%S", gmtime())
@@ -51,7 +53,8 @@ if __name__ == "__main__":
         models=[
             preproc_model,
             ll_model
-        ]
+        ],
+        sagemaker_session=sess
     )
     print('Deploying SM EndPoint')
     sm_model.deploy(initial_instance_count=1,
