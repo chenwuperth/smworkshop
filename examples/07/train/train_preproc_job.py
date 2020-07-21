@@ -33,5 +33,7 @@ if __name__ == '__main__':
         path='abalone.csv', 
         bucket=bucket,
         key_prefix='{}/{}'.format(prefix, 'train'))
-     # there is no need to validate pre-processing, so no SM_CHANNEL_TEST
+     # there is no need to validate models for pre-processing, so no SM_CHANNEL_TEST
     sklearn_preprocessor.fit({'train': train_input})
+    # https://github.com/aws/sagemaker-python-sdk/blob/master/src/sagemaker/estimator.py#L724-L741
+    print(f'SKlearn preprocessor trained model uploaded to - {sklearn_preprocessor.model_data}')

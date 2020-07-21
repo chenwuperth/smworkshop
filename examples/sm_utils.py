@@ -35,6 +35,7 @@ def parse_infer_args():
     parser.add_argument('--input-file', type=str)
     parser.add_argument('--model-file', type=str)
     parser.add_argument('--output-dir', type=str)
+    parser.add_argument('--preproc-model', type=str, help="S3 URL of the proprocessing model")
 
     args, _ = parser.parse_known_args()
     if args.infer_mode == 'bt' and args.input_file is None:
@@ -49,5 +50,15 @@ def parse_train_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--tune', dest='tune', action='store_true', default=False)
     parser.add_argument('--tune-job-name', type=str)
+    parser.add_argument('--train-s3-path', type=str, help='S3 location of the training set')
     args, _ = parser.parse_known_args()
+    return args
+
+def parse_invoke_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--end-point', type=str)
+    parser.add_argument('--delete', dest='delete_ep', action='store_true', default=False)
+    args, _ = parser.parse_known_args()
+    if (args.end_point is None):
+        raise Exception('Missing parameter --end-point')
     return args
