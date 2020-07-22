@@ -31,10 +31,11 @@ if __name__ == '__main__':
     prefix = 'inference-pipeline-scikit-linearlearner'
 
     # curl -O https://s3-us-west-2.amazonaws.com/sparkml-mleap/data/abalone/abalone.csv
-    train_input = sess.upload_data(
-        path=os.path.join(fdir, 'abalone.csv'), 
-        bucket=bucket,
-        key_prefix='{}/{}'.format(prefix, 'train'))
+    # train_input = sess.upload_data(
+    #     path=os.path.join(fdir, 'abalone.csv'), 
+    #     bucket=bucket,
+    #     key_prefix='{}/{}'.format(prefix, 'train'))
+    train_input = args.train_s3_path
      # there is no need to validate models for pre-processing, so no SM_CHANNEL_TEST
     sklearn_preprocessor.fit({'train': train_input})
     print(f'train input on S3 - {train_input}')
