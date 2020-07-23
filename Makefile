@@ -5,6 +5,7 @@ MODULE_TRAIN=$(MODULE).train
 MODULE_INFER=$(MODULE).inference
 
 INPUT_FNAME=abalone.csv
+TRANSFORMER_OUTPUT_SUFFIX=.out
 INPUT_S3_BUCKET=sagemaker-ap-southeast-2-454979696062
 INPUT_S3_PREFIX=inference-pipeline-scikit-linearlearner/train
 INPUT_S3_DIR=$(INPUT_S3_BUCKET)/$(INPUT_S3_PREFIX)
@@ -24,17 +25,17 @@ trained_preproc_model: raw_data_on_s3
 preprocessed_data: trained_preproc_model raw_data_on_s3
 	$(eval preproc_model=$(shell cat $< | tail -1 | rev | cut -d' ' -f1 | rev))
 	$(eval raw_input=$(shell cat $(word 2,$^) | rev | cut -d' ' -f1 | rev))
-	python -m $(MODULE_INFER).infer_preproc_job --input-file $(raw_input) --model-file $(preproc_model) --output-dir $(INPUT_S3_DIR) > $@
+	python -m $(MODULE_INFER).infer_preproc_job --input-file $(raw_input) --model-file $(preproc_model) --output-dir s3://$(INPUT_S3_DIR) > $@
 
 # train the ML model  using featurized data from the last step, output the trained ML model in S3
 trained_ml_model: preprocessed_data
 	$(eval preproc_data=$(shell cat $< | tail -1 | rev | cut -d' ' -f1 | rev))
-	python -m $(MODULE_TRAIN).train_job --train-s3-path $(preproc_data) > $@
+	python -m $(MODULE_TRAIN).train_job --train-s3-path $(preproc_data)/$(INPUT_FNAME)$(TRANSFORMER_OUTPUT_SUFFIX) > $@
 
 # create an inference pipeline by chaining the pre-processor model and the ML model into a single endpoint
 infer_pipeline_endpoint: trained_ml_model trained_preproc_model
 	$(eval ml_model=$(shell cat $< | tail -1 | rev | cut -d' ' -f1 | rev))
-	$(eval preproc_model=$(shell cat $(word 2,$^) | rev | cut -d' ' -f1 | rev))
+	$(eval preproc_model=$(shell cat $(word 2,$^) | tail -1 | rev | cut -d' ' -f1 | rev))
 	python -m $(MODULE_INFER).inference_job --infer-mode ep --model-file $(ml_model) --preproc-model $(preproc_model) > $@
 
 # invoke the endpoint 
@@ -44,7 +45,7 @@ invoke_endpoint: infer_pipeline_endpoint
 
 # delete the endpoint
 delete_endpoint: invoke_endpoint
-	$(eval ep_url=$(shell cat $< | tail -1 | rev | cut -d' ' -f1 | rev))
+	$(eval ep_url=$(shell cat $< | head -1 | rev | cut -d' ' -f1 | rev))
 	python -m $(MODULE_INFER).invoke_endpoint --end-point $(ep_url) --delete > $@
 
 clean :
